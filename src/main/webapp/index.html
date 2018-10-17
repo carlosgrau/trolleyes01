@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    </head>
+    <style>
+        #logout{
+            visibility: hidden;
+        }
+        #secreto{
+            visibility: hidden;
+        }
+        #check{
+            visibility: hidden;
+        }
+    </style>
+    <body>
+        <form style="display:block;" id="formulario">
+            <div class="container">
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" class="form-control" id="user" placeholder="Introduzca el usuario">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="text" class="form-control" id="password" placeholder="Introduzca la contraseña">
+                </div>
+                <br>
+            </div>
+        </form>
+        <div class="container">
+            <button type="button" class="btn btn-info" id="enviar">LOGIN</button> 
+            <button type="button" class="btn btn-info" id="conectar">CONECTAR</button> 
+            <button type="button" class="btn btn-danger" id="logout">LOGOUT</button> 
+            <button type="button" class="btn btn-warning" id="secreto">SECRETO</button>
+            <button type="button" class="btn btn-info" id="check">CHECK</button>
+        </div>
+        <br>
+        <div class="p-3 mb-2 bg-success text-white" style="display:none;" id="msgcorrecto"></div>
+        <div class="p-3 mb-2 bg-danger text-white" style="display:none;" id="msgerror"></div>
+
+    </body>
+    <script>
+        $(document).ready(function () {
+            var op = "";
+            $("#enviar").click(function () {
+                ajax("login");
+            });
+            $("#logout").click(function () {
+                ajax("logout");
+            });
+            $("#secreto").click(function () {
+                ajax("secreto");
+            });
+            $("#check").click(function () {
+                ajax("check");
+            });
+            $("#conectar").click(function () {
+                ajax("conectar");
+            });
+            function ajax(str) {
+                document.getElementById('msgcorrecto').style.display = 'none';
+                document.getElementById('msgerror').style.display = 'none';
+                 if (str === "conectar") {
+                    var url = "";
+                    op = "conectar";
+                    url = "/trolleyes01/json?op=" + op;
+                };
+                if (str === "login") {
+                    var url = "";
+                    var usuario = $("#user").val();
+                    var password = $("#password").val();
+                    op = "login";
+                    url = "/trolleyes01/json?op=" + op + "&user=" + usuario + "&pass=" + password;
+                };
+                if (str === "logout") {
+                    var url = "";
+                    op = "logout";
+                    url = "/trolleyes01/json?op=" + op;
+                };
+                if (str === "secreto") {
+                    var url = "";
+                    op = "secreto";
+                    url = "/trolleyes01/json?op=" + op;
+                };
+                if (str === "check") {
+                    var url = "";
+                    op = "check";
+                    url = "/trolleyes01/json?op=" + op;
+                };
+
+                $.ajax({
+                    dataType: "json",
+                    url: url,
+                    cache: false,
+                    menthod: "GET",
+
+                    success: function (data) {
+                        document.getElementById('msgcorrecto').style.display = 'block';
+                        $("#msgcorrecto").empty().append(data.status + ":" + data.msg);
+                        if (op === "login" ) {
+                            $("#enviar").css("visibility","hidden");
+                            $("#logout").css("visibility","visible");
+                            $("#secreto").css("visibility","visible");
+                            $("#check").css("visibility","visible");
+                            document.getElementById('formulario').style.display = 'none';
+                        }
+                      
+                        if (op === "logout") {
+                            $(':input', '#formulario').val('');
+                            document.getElementById('formulario').style.display = 'block';
+                            document.getElementById('enviar').style.display = 'block';
+                            document.getElementById('logout').style.display = 'none';
+                            document.getElementById('secreto').style.display = 'none';
+                        }
+                    },           
+                    error: function (data) {
+                        document.getElementById('msgerror').style.display = 'block';
+                        $("#msgerror").empty().append(data.status + ":" + data.responseJSON.msg);
+
+                    }
+
+                });
+
+            }
+
+        }
+        );
+    </script>
+</html>
+
